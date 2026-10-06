@@ -1,0 +1,566 @@
+@{
+    ViewData["Title"] = "Ana Sayfa";
+    Layout = "~/Views/Shared/_LandingLayout.cshtml";
+}
+
+<!-- Hero Section -->
+<!-- Hero Section -->
+<section class="hero-section min-vh-100 d-flex align-items-center position-relative text-white overflow-hidden">
+    <!-- Background Decor (Optional glow) -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle at 10% 20%, rgba(255, 90, 95, 0.15) 0%, transparent 40%); pointer-events: none;"></div>
+
+    <div class="container position-relative z-2">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-center text-lg-start pt-5 pt-lg-0">
+                <div class="mb-3 d-inline-block">
+                     <span class="badge bg-white bg-opacity-10 text-warning mb-3 px-3 py-2 rounded-pill fw-light border border-white border-opacity-25">
+                        <i class="bi bi-stars me-2"></i>Yeni Nesil Düğün Albümü
+                     </span>
+                     <h2 class="fw-bold display-4 brand-gradient">KarWedding</h2> 
+                </div>
+                <h1 class="display-3 fw-bold mb-4 lh-sm">Anılarınız <br>Dijitalleşiyor</h1>
+                <p class="lead text-white-50 mb-5 fs-5 w-lg-75">
+                    Düğün, nişan veya kına... Misafirleriniz QR kodu okutsun, tüm anılar tek bir albümde toplansın. Uygulama indirmek yok!
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+                    <a href="#nasil-calisir" class="btn btn-gradient-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg">
+                        Hadi Başlayalım
+                    </a>
+
+                </div>
+            </div>
+            <div class="col-lg-6 mt-5 mt-lg-0 text-center position-relative">
+                <!-- Glowing effect behind image -->
+                <div class="position-absolute top-50 start-50 translate-middle w-75 h-75 bg-primary opacity-25 rounded-circle blur-bg"></div>
+                <img src="/img/anasyafa.jpg" class="img-fluid rounded-4 shadow-2xl position-relative z-2 lift-on-hover" alt="Wedding Couple" style="transform: rotate(-2deg); width: 100%; max-width: 600px; height: auto;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); /* Deep rich gradient */
+        /* Fallback to footer match if preferred, but this is richer */
+        background: radial-gradient(circle at top right, #243B55, #141E30); 
+    }
+    .brand-gradient {
+        background: linear-gradient(to right, #FFD700, #FDB931);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -2px;
+    }
+    .btn-gradient-primary {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); /* Pink/Yellow-Gold Gradient like reference */
+        background: linear-gradient(135deg, #c471ed 0%, #f64f59 100%); /* The popular pink/purple one */
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    .btn-gradient-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(246, 79, 89, 0.4);
+        color: white;
+    }
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+    .blur-bg {
+        filter: blur(60px);
+    }
+    .shadow-2xl {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .lift-on-hover {
+        transition: transform 0.5s ease;
+    }
+    .lift-on-hover:hover {
+        transform: rotate(0deg) scale(1.02);
+    }
+</style>
+
+<!-- How It Works -->
+<style>
+    .how-it-works-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 100px 0;
+    }
+    .btn-primary-new {
+        background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        transition: transform 0.3s;
+    }
+    .btn-primary-new:hover {
+        transform: translateY(-3px);
+        color: white;
+    }
+    
+    /* New Minimal Styles for How It Works */
+    .step-minimal {
+        text-align: left;
+        color: white;
+        padding: 20px;
+    }
+    .step-number-minimal {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        opacity: 0.9;
+    }
+    .step-title-minimal {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    .step-desc-minimal {
+        font-size: 0.95rem;
+        opacity: 0.8;
+        line-height: 1.6;
+    }
+
+    /* Feature Cards */
+    .feature-card {
+        border: 1px solid #eee;
+        border-radius: 16px;
+        padding: 30px;
+        transition: all 0.3s;
+        height: 100%;
+        background: white;
+    }
+    .feature-card:hover {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-color: transparent;
+        transform: translateY(-5px);
+    }
+    .feature-icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<section id="nasil-calisir" class="how-it-works-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-white mb-3 display-5">Nasıl Çalışır?</h2>
+            <p class="text-white-50 fs-5">Uygulamayı Nasıl Kullanacağınızı Öğrenin</p>
+        </div>
+        <div class="row g-4 mt-5">
+            <!-- Step 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-minimal">
+                    <div class="step-number-minimal">1</div>
+                    <h4 class="step-title-minimal">Üye Ol, Etkinlik Oluştur, QR Kodu Paylaş</h4>
+                    <p class="step-desc-minimal">Etkinliğin öncesinde KarWedding'e üye ol ve etkinlik oluşturarak sana özel üretilen QR kodu davetlilerinle paylaş.</p>
+                </div>
+            </div>
+            <!-- Step 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-minimal">
+                    <div class="step-number-minimal">2</div>
+                    <h4 class="step-title-minimal">QR Kodu Okut</h4>
+                    <p class="step-desc-minimal">QR Kodu cihazından okutanlar etkinliğine özel oluşturulan dijital albümüne gitsin.</p>
+                </div>
+            </div>
+            <!-- Step 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-minimal">
+                    <div class="step-number-minimal">3</div>
+                    <h4 class="step-title-minimal">KarWedding'e Yükle</h4>
+                    <p class="step-desc-minimal">Sen ve davetlilerin etkinlik sırasında çektiğiniz fotoğraf, video ve mesajlarınızı kendi cihazlarınızdan kolaylıkla KarWedding'e yükleyin.</p>
+                </div>
+            </div>
+            <!-- Step 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-minimal">
+                    <div class="step-number-minimal">4</div>
+                    <h4 class="step-title-minimal">Anıların Tadını Çıkar</h4>
+                    <p class="step-desc-minimal">Etkinlik boyunca oluşan dijital albümünden herkes fotoğraf ve mesajları paylaşsın, indirsin, saklasın.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Memory Album Feature Section -->
+<section class="py-5 bg-white overflow-hidden">
+    <div class="container py-5">
+        <div class="row align-items-center g-5">
+            <!-- Left Image -->
+            <div class="col-lg-6 position-relative text-center">
+                <div class="position-absolute top-50 start-50 translate-middle w-75 h-75 bg-warning opacity-10 rounded-circle blur-bg"></div>
+                <img src="/img/tanitim-karti.jpg" 
+                     class="img-fluid rounded-4 shadow-lg position-relative z-2" 
+                     alt="Melis & Burak Wedding QR Card"
+                     style="max-height: 500px; object-fit: cover; width: 100%;">
+            </div>
+            
+            <!-- Right Content -->
+            <div class="col-lg-6 ps-lg-5">
+                <h2 class="display-6 fw-bold mb-4" style="color: #2c5364; letter-spacing: -1px; font-family: 'Plus Jakarta Sans', sans-serif;">
+                    Dijital anı albümü ile <br>
+                    <span style="color: #2c5364;">unutulmaz anlarınızı</span> <br>
+                    ölümsüzleştirin!
+                </h2>
+                
+                <div class="row g-4 mb-4 mt-2">
+                    <!-- Feature 1 -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <i class="bi bi-stars fs-4" style="color: #2c5364;"></i>
+                            <span class="fs-5 fw-bold ms-2" style="color: #2c5364;">Fotoğraf, Video</span>
+                        </div>
+                        <p class="text-muted small mb-0 lh-base">
+                            Misafirleriniz QR kodu okutarak Anı albümünüze fotoğraflarını ve videolarını ekleyebilir ve sizlere anı bırakabilir.
+                        </p>
+                    </div>
+                    
+                    <!-- Feature 2 -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <i class="bi bi-stars fs-4" style="color: #2c5364;"></i>
+                            <span class="fs-5 fw-bold ms-2" style="color: #2c5364;">Anı Notu</span>
+                        </div>
+                        <p class="text-muted small mb-0 lh-base">
+                            Misafirleriniz fotoğraf ve video eklemelerinde sizlere en özel anınız ile ilgili notlar bırakabilir.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="#pricing" onclick="document.querySelector('.pricing-section').scrollIntoView({behavior: 'smooth'}); return false;" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold" style="border-width: 1px;">
+                        Fiyatlandırma
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Usage Areas Section -->
+<section id="kullanim-alanlari" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold" style="color: #2c5364; font-family: 'Plus Jakarta Sans', sans-serif;">Kullanım Alanları</h2>
+        </div>
+
+
+
+        <div class="row g-4">
+            <!-- Card 1: Düğün Etkinlikleri -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Düğün Etkinlikleri" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center p-4">
+                        <h5 class="fw-bold mb-3" style="color: #2c5364;">Düğün Etkinlikleri</h5>
+                        <p class="text-muted small mb-0">Düğün, nişan gibi etkinliklerinizde en güzel anılarınızı misafirlerinizden toplamak için KarWedding'i kullanın. Misafirleriniz, QR kodu tarayarak düğün boyunca çektikleri fotoğraf ve videoları kolayca paylaşabilir.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Doğum Günü -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="/img/dogum-gunu.jpg" class="card-img-top" alt="Doğum Günü" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center p-4">
+                        <h5 class="fw-bold mb-3" style="color: #2c5364;">Doğum Günü</h5>
+                        <p class="text-muted small mb-0">KarWedding ile doğum günü partinizin tüm anılarını toplayın. Misafirleriniz, QR kodunu tarayarak fotoğraf ve videoları hızlıca paylaşabilir. Böylece parti boyunca çekilen tüm anılar tek bir yerde toplanır. Doğum gününüzün her anını hatırlayın.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Lansman -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Lansman" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center p-4">
+                        <h5 class="fw-bold mb-3" style="color: #2c5364;">Lansman</h5>
+                        <p class="text-muted small mb-0">KarWedding sayesinde, QR kodu kullanarak katılımcılar fotoğraf ve videoları paylaşabilir. Bu sayede, lansman etkinliğinin tüm önemli anlarını ve katılımcıların tepkilerini tek bir yerde toplayabilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Festival -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="/img/festival.jpg" class="card-img-top" alt="Festival" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center p-4">
+                        <h5 class="fw-bold mb-3" style="color: #2c5364;">Festival</h5>
+                        <p class="text-muted small mb-0">Festival boyunca katılımcıların çektikleri fotoğraf ve videoları kolayca toplayın. KarWedding, QR kodu taratarak her anın paylaşılmasını sağlar. Bu sayede, festivalin coşkusunu ve eğlencesini tek bir anı galerisinde toplayabilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Fuar -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Fuar" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center p-4">
+                        <h5 class="fw-bold mb-3" style="color: #2c5364;">Fuar</h5>
+                        <p class="text-muted small mb-0">Fuar etkinliklerinizde etkileşimi artırın. Katılımcılar stantları gezerken çektikleri fotoğrafları ve videoları QR kod ile anında paylaşabilir. Fuar sonrası unutulmaz bir dijital arşiv oluşturun.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Kurumsal Etkinlik -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Kurumsal Etkinlik" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center p-4">
+                        <h5 class="fw-bold mb-3" style="color: #2c5364;">Kurumsal Etkinlik</h5>
+                        <p class="text-muted small mb-0">Konferanslar, seminerler veya şirket içi etkinliklerde, katılımcıların deneyimlerini ve geri bildirimlerini hızlıca toplayın. KarWedding ile kurumsal etkinliğinizin tüm önemli anlarını profesyonel bir şekilde arşivleyin.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section (Check, Share, Keep) -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold display-6 mb-2">Çek, Paylaş, Sakla</h2>
+            <p class="text-muted">Tüm Hatıralarınız Tek Bir Yerde</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Card 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-circle"><i class="bi bi-images"></i></div>
+                    <h6 class="fw-bold">Dijital Albüm</h6>
+                    <p class="text-muted small mb-0">Etkinliğinden tüm fotoğraf ve videoları tek bir dijital albümde topla.</p>
+                </div>
+            </div>
+             <!-- Card 2 -->
+            <div class="col-md-6 col-lg-3">
+                 <div class="feature-card">
+                    <div class="feature-icon-circle"><i class="bi bi-chat-quote"></i></div>
+                    <h6 class="fw-bold">Dijital Anı Defteri</h6>
+                    <p class="text-muted small mb-0">Misafirlerin mesajlarını sana iletebilsin.</p>
+                </div>
+            </div>
+             <!-- Card 3 -->
+            <div class="col-md-6 col-lg-3">
+                 <div class="feature-card">
+                    <div class="feature-icon-circle"><i class="bi bi-camera"></i></div>
+                    <h6 class="fw-bold">Anlık Paylaşım</h6>
+                    <p class="text-muted small mb-0">Etkinlik sırasında veya sonrasında yükleme yap.</p>
+                </div>
+            </div>
+             <!-- Card 4 -->
+            <div class="col-md-6 col-lg-3">
+                 <div class="feature-card">
+                    <div class="feature-icon-circle"><i class="bi bi-cloud-download"></i></div>
+                    <h6 class="fw-bold">Tek Tıkla İndirme</h6>
+                    <p class="text-muted small mb-0">Anıları tek tıkla hemen indir.</p>
+                </div>
+            </div>
+             <!-- Card 5 -->
+            <div class="col-md-6 col-lg-3">
+                 <div class="feature-card">
+                    <div class="feature-icon-circle"><i class="bi bi-phone-vibrate"></i></div>
+                    <h6 class="fw-bold">App İndirmeye Gerek Yok</h6>
+                    <p class="text-muted small mb-0">Mobil app indirmeye gerek olmadan kullanıcı dostu arayüzümüzle.</p>
+                </div>
+            </div>
+             <!-- Card 6 -->
+            <div class="col-md-6 col-lg-3">
+                 <div class="feature-card">
+                    <div class="feature-icon-circle"><i class="bi bi-magic"></i></div>
+                    <h6 class="fw-bold">Kişiselleştirilebilir</h6>
+                    <p class="text-muted small mb-0">İhtiyacına göre paylaşımları kişiselleştir.</p>
+                </div>
+            </div>
+             <!-- Card 7 -->
+            <div class="col-md-6 col-lg-3">
+                 <div class="feature-card">
+                    <div class="feature-icon-circle"><i class="bi bi-shield-lock"></i></div>
+                    <h6 class="fw-bold">Gizli & Güvenli</h6>
+                    <p class="text-muted small mb-0">Dijital albümünü kimlerle paylaşacağına sen karar ver.</p>
+                </div>
+            </div>
+             <!-- Card 8 -->
+            <div class="col-md-6 col-lg-3">
+                 <div class="feature-card">
+                    <div class="feature-icon-circle"><i class="bi bi-wallet2"></i></div>
+                    <h6 class="fw-bold">Esnek Fiyatlandırma</h6>
+                    <p class="text-muted small mb-0">İhtiyacına ve bütçene en uygun hizmet planını seç.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Center CTA Button at bottom of features optionally, or typically hidden in this layout, but adding space -->
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<style>
+    .pricing-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0;
+        color: white;
+    }
+    .pricing-card {
+        background: white;
+        color: #333;
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        height: 100%;
+        position: relative;
+        transition: transform 0.3s;
+        display: flex;
+        flex-direction: column;
+    }
+    .pricing-card:hover {
+        transform: translateY(-10px);
+    }
+    .pricing-card.pro {
+        background: linear-gradient(135deg, #d558c8 0%, #24d292 100%); /* Fallback or different gradient */
+        background: linear-gradient(135deg, #c471ed 0%, #f64f59 100%); /* Pink/Purpleish */
+        color: white;
+        border: 2px solid rgba(255,255,255,0.2);
+        transform: scale(1.05);
+        z-index: 10;
+    }
+    .pricing-card.pro:hover {
+        transform: scale(1.05) translateY(-10px);
+    }
+    .price-tag {
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 20px 0;
+    }
+    .price-currency {
+        font-size: 1.5rem;
+        vertical-align: super;
+    }
+    .price-old {
+        text-decoration: line-through;
+        opacity: 0.6;
+        font-size: 1.2rem;
+        margin-left: 10px;
+    }
+    .pricing-features {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+        margin: 30px 0;
+        flex: 1;
+    }
+    .pricing-features li {
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+        position: relative;
+        padding-left: 20px;
+    }
+    .pricing-features li::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+        font-weight: bold;
+    }
+    .pricing-card.pro .pricing-features li::before {
+        color: white;
+    }
+    .badge-popular {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        color: #c471ed;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .btn-pricing {
+        border-radius: 50px;
+        padding: 10px 30px;
+        width: 100%;
+        border: 1px solid #ddd;
+        background: white;
+        color: #333;
+        font-weight: 600;
+    }
+    .pricing-card.pro .btn-pricing {
+        background: white;
+        color: #c471ed;
+        border: none;
+    }
+</style>
+
+<section id="fiyatlandirma" class="pricing-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold display-5">Fiyatlandırma</h2>
+            <p class="opacity-75">İhtiyacınıza en uygun paketi seçin</p>
+        </div>
+        
+        <div class="row g-4 align-items-stretch justify-content-center">
+            <!-- Free Plan -->
+            <div class="col-md-6 col-lg-4">
+                <div class="pricing-card h-100">
+                    <h4 class="fw-bold">Ücretsiz</h4>
+                    <div class="price-tag">0 <span class="price-currency">TL</span></div>
+                    <ul class="pricing-features">
+                        <li>50 fotoğraf, video & mesaj</li>
+                        <li>7 gün depolama</li>
+                        <li>1 gün yükleme süresi</li>
+                        <li>Limitsiz davetli</li>
+                    </ul>
+                    <a href="/Account/Login" class="btn btn-outline-dark w-100 rounded-pill py-3 fw-bold mt-auto">Bu Planı Seç</a>
+                </div>
+            </div>
+            
+            <!-- Pro Plan -->
+            <div class="col-md-6 col-lg-4">
+                <div class="pricing-card pro shadow-lg h-100">
+                    <div class="badge-popular">En popüler!</div>
+                    <h4 class="fw-bold">Pro</h4>
+                    <div class="price-tag">2.000 <span class="price-currency">TL</span> <span class="price-old text-white-50">3.999 TL</span></div>
+                    <ul class="pricing-features">
+                        <li>Sınırsız yükleme</li>
+                        <li>365 gün depolama</li>
+                        <li>30 gün yükleme süresi</li>
+                        <li>Gelişmiş kişiselleştirme</li>
+                        <li>Limitsiz davetli</li>
+                    </ul>
+                    <a href="/Payment/Checkout?plan=Pro" class="btn btn-gradient-primary w-100 rounded-pill py-3 fw-bold shadow-lg mt-auto">Bu Planı Seç</a>
+                </div>
+            </div>
+            
+            <!-- SalonBusiness Plan -->
+            <div class="col-md-6 col-lg-4">
+                <div class="pricing-card h-100" style="border: 2px solid rgba(255,255,255,0.4);">
+                    <h6 class="text-uppercase small fw-bold opacity-75 mb-2">İşletmeler için</h6>
+                    <h4 class="fw-bold">Salon Business</h4>
+                    <div class="price-tag">4.999 <span class="price-currency">TL</span><span class="price-old">7.999 TL</span></div>
+                    <p class="small opacity-75 mb-2">Aylık / Salon başına</p>
+                    <ul class="pricing-features">
+                        <li>Sınırsız etkinlik</li>
+                        <li>Her etkinlik: 365 gün depolama</li>
+                        <li>Her etkinlik: 30 gün yükleme</li>
+                        <li>Salon logosu & markalaşma</li>
+                        <li>Öncelikli destek</li>
+                    </ul>
+                    <a href="/Payment/Checkout?plan=SalonBusiness" class="btn btn-outline-dark w-100 rounded-pill py-3 fw-bold mt-auto">Bu Planı Seç</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

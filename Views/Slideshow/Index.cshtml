@@ -1,0 +1,245 @@
+@model IEnumerable<dynamic>
+@{
+    Layout = null; // Kendi layout'u olacak
+    var weddingEvent = ViewBag.Event as dugunsalonu.Models.WeddingEvent;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@weddingEvent.CoupleName - Canlı Akış</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        #slideshow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            max-width: 90vw;
+            max-height: 90vh;
+            text-align: center;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+        .slide img {
+            max-height: 80vh;
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+        .message-box {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-top: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        .sender-name {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .qr-overlay {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            color: black;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        .qr-overlay img {
+            width: 100px;
+            height: 100px;
+        }
+        .brand-overlay {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            color: #667eea;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .brand-overlay img {
+            max-height: 40px;
+            vertical-align: middle;
+        }
+        .waiting-message {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            animation: pulse 2s infinite;
+        }
+        @@keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="brand-overlay">
+        @if (!string.IsNullOrEmpty(weddingEvent.LogoUrl))
+        {
+             <img src="@weddingEvent.LogoUrl" alt="Partner Logo">
+        }
+        else
+        {
+             <span><i class="bi bi-stars"></i> KarWedding</span>
+        }
+    </div>
+
+    <div id="slideshow-container">
+        @if (Model != null && Model.Count() > 0)
+        {
+            var index = 0;
+            foreach (var item in Model)
+            {
+                <div class="slide @(index == 0 ? "active" : "")" data-index="@index">
+                    <img src="@item.PhotoPath" alt="Wedding Photo">
+                    @if (!string.IsNullOrEmpty(item.Message))
+                    {
+                        <div class="message-box">"@item.Message"</div>
+                    }
+                    <div class="sender-name">@item.GuestName</div>
+                </div>
+                index++;
+            }
+        }
+        else
+        {
+            <div class="waiting-message">
+                Fotoğraflar yüklenince burada görünecek...
+            </div>
+        }
+    </div>
+
+    <div class="qr-overlay">
+        <!-- QR Code Placeholder (You can use a library or API later) -->
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=@Context.Request.Scheme://@Context.Request.Host/event/@weddingEvent.Slug" alt="QR Code">
+        <div class="small mt-1 fw-bold">Fotoğraf Yükle</div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script> <!-- Libman ile eklemek gerekecek veya CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    
+    <script>
+        const slug = "@weddingEvent.Slug";
+        let slides = document.querySelectorAll('.slide');
+        let currentIndex = 0;
+        let slideInterval;
+        const intervalTime = 5000; // 5 saniye
+        const container = document.getElementById('slideshow-container');
+
+        // Slayt döngüsü
+        function startSlideshow() {
+            if (slides.length <= 1) return; // Tek slayt varsa dönme
+
+            slideInterval = setInterval(() => {
+                slides[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % slides.length;
+                slides[currentIndex].classList.add('active');
+            }, intervalTime);
+        }
+
+        // Yeni fotoğraf geldiğinde
+        function addNewSlide(photoPath, message, guestName) {
+            // "Bekleniyor" mesajını kaldır
+            if (document.querySelector('.waiting-message')) {
+                container.innerHTML = '';
+            }
+
+            const div = document.createElement('div');
+            div.className = 'slide';
+            if (slides.length === 0) div.classList.add('active');
+            
+            const img = document.createElement('img');
+            img.src = photoPath || '';
+            img.alt = 'Wedding Photo';
+            div.appendChild(img);
+
+            if (message) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message-box';
+                msgDiv.textContent = `"${message}"`;
+                div.appendChild(msgDiv);
+            }
+
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'sender-name';
+            nameDiv.textContent = guestName || 'Misafir';
+            div.appendChild(nameDiv);
+            container.appendChild(div);
+
+            // Listeyi güncelle
+            slides = document.querySelectorAll('.slide');
+
+            // Eğer ilk fotoğrafsa slaytı başlat
+            if (slides.length === 2) {
+                startSlideshow();
+            }
+        }
+
+        if (slides.length > 0) {
+            startSlideshow();
+        }
+
+        // SignalR Bağlantısı
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/slideshowHub")
+            .build();
+
+        connection.on("ReceiveNewPhoto", function (photoPath, message, guestName) {
+            addNewSlide(photoPath, message, guestName);
+            
+            // Opsiyonel: Yeni gelen fotoğrafı hemen göster
+            if (slides.length > 1) {
+                clearInterval(slideInterval);
+                slides[currentIndex].classList.remove('active');
+                currentIndex = slides.length - 1; // Son eklenen
+                slides[currentIndex].classList.add('active');
+                startSlideshow();
+            }
+        });
+
+        connection.start().then(function () {
+            console.log("SignalR Connected!");
+            connection.invoke("JoinGroup", slug).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,717 @@
+@model dugunsalonu.ViewModels.PaymentViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Güvenli Ödeme - KarWedding @Model.Plan</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Top bar */
+        .secure-topbar {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 12px 0;
+        }
+        .secure-topbar .brand {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .secure-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #28a745;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Main container */
+        .checkout-wrapper {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Summary card */
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .plan-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .price-display {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .price-display .currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+        .price-old {
+            text-decoration: line-through;
+            opacity: 0.6;
+            font-size: 1.1rem;
+            margin-left: 8px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-list li i {
+            color: #90EE90;
+            font-size: 1.1rem;
+        }
+        .discount-badge {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        /* Payment form card */
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            border: 1px solid #e9ecef;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .form-control:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .input-icon-group {
+            position: relative;
+        }
+        .input-icon-group .icon-left {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+            z-index: 2;
+        }
+        .input-icon-group .form-control {
+            padding-left: 42px;
+        }
+        .input-icon-group .card-brand {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.3rem;
+            color: #6c757d;
+        }
+
+        .btn-pay {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-pay:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
+            color: white;
+        }
+        .btn-pay:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .btn-pay .spinner-border {
+            display: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            border-width: 2px;
+        }
+        .btn-pay.loading .spinner-border { display: inline-block; }
+        .btn-pay.loading .btn-text { display: none; }
+
+        /* Security indicators */
+        .security-strip {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        .security-strip i {
+            color: #28a745;
+            font-size: 1.2rem;
+        }
+        .security-strip span {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .trust-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+        .trust-badge i {
+            font-size: 1.1rem;
+        }
+
+        /* Steps indicator */
+        .checkout-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+        }
+        .checkout-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #adb5bd;
+        }
+        .checkout-step.active {
+            color: #764ba2;
+            font-weight: 600;
+        }
+        .checkout-step.done {
+            color: #28a745;
+        }
+        .step-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 2px solid #e9ecef;
+            color: #adb5bd;
+        }
+        .checkout-step.active .step-dot {
+            background: #764ba2;
+            border-color: #764ba2;
+            color: white;
+        }
+        .checkout-step.done .step-dot {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+        .step-line {
+            width: 40px;
+            height: 2px;
+            background: #e9ecef;
+        }
+
+        /* Checkbox custom */
+        .form-check-input:checked {
+            background-color: #764ba2;
+            border-color: #764ba2;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .checkout-wrapper { margin: 1rem auto; }
+            .payment-card, .summary-card { padding: 1.5rem; }
+            .price-display { font-size: 2.2rem; }
+            .trust-badges { flex-wrap: wrap; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Secure Top Bar -->
+    <div class="secure-topbar">
+        <div class="container d-flex align-items-center justify-content-between">
+            <span class="brand"><i class="bi bi-stars me-1"></i> KarWedding</span>
+            <span class="secure-badge">
+                <i class="bi bi-shield-lock-fill"></i> 256-bit SSL Güvenli Ödeme
+            </span>
+        </div>
+    </div>
+
+    <div class="checkout-wrapper">
+
+        <!-- Steps -->
+        <div class="checkout-steps">
+            <div class="checkout-step done">
+                <span class="step-dot"><i class="bi bi-check"></i></span>
+                <span>Plan Seçimi</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="checkout-step active">
+                <span class="step-dot">2</span>
+                <span>Ödeme</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="checkout-step">
+                <span class="step-dot">3</span>
+                <span>Onay</span>
+            </div>
+        </div>
+
+        <!-- Validation Summary -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Ödeme işlemi başarısız.</strong> Lütfen bilgilerinizi kontrol edip tekrar deneyin.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row g-4">
+            <!-- Payment Form -->
+            <div class="col-lg-7 order-lg-first order-last">
+                <div class="payment-card">
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <i class="bi bi-credit-card-2-front fs-4 text-primary"></i>
+                        <h4 class="mb-0 fw-bold">Kart Bilgileri</h4>
+                    </div>
+
+                    <!-- Security Strip -->
+                    <div class="security-strip">
+                        <i class="bi bi-lock-fill"></i>
+                        <span>Kart bilgileriniz 256-bit SSL şifreleme ile korunmaktadır. Bilgileriniz sunucularımızda saklanmaz.</span>
+                    </div>
+
+                    <form asp-action="ProcessPayment" asp-controller="Payment" method="post" id="paymentForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Plan" />
+
+                        <!-- Card Holder Name -->
+                        <div class="mb-3">
+                            <label asp-for="CardHolderName" class="form-label text-muted small fw-semibold">Kart Üzerindeki İsim</label>
+                            <div class="input-icon-group">
+                                <i class="bi bi-person icon-left"></i>
+                                <input asp-for="CardHolderName" class="form-control" placeholder="Ad Soyad" autocomplete="cc-name" />
+                            </div>
+                            <span asp-validation-for="CardHolderName" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Card Number -->
+                        <div class="mb-3">
+                            <label asp-for="CardNumber" class="form-label text-muted small fw-semibold">Kart Numarası</label>
+                            <div class="input-icon-group">
+                                <i class="bi bi-credit-card icon-left"></i>
+                                <input asp-for="CardNumber" class="form-control" id="cardNumber"
+                                       placeholder="0000 0000 0000 0000" maxlength="19"
+                                       inputmode="numeric" autocomplete="cc-number" />
+                                <span class="card-brand" id="cardBrand"></span>
+                            </div>
+                            <span asp-validation-for="CardNumber" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Expiry & CVC -->
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label asp-for="ExpiryDate" class="form-label text-muted small fw-semibold">Son Kullanma Tarihi</label>
+                                <div class="input-icon-group">
+                                    <i class="bi bi-calendar3 icon-left"></i>
+                                    <input asp-for="ExpiryDate" class="form-control" id="expiryDate"
+                                           placeholder="AA/YY" maxlength="5"
+                                           inputmode="numeric" autocomplete="cc-exp" />
+                                </div>
+                                <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
+                            </div>
+                            <div class="col-6">
+                                <label asp-for="Cvc" class="form-label text-muted small fw-semibold">CVC / CVV</label>
+                                <div class="input-icon-group">
+                                    <i class="bi bi-shield-lock icon-left"></i>
+                                    <input asp-for="Cvc" class="form-control" id="cvcInput"
+                                           placeholder="123" maxlength="4"
+                                           inputmode="numeric" autocomplete="cc-csc" />
+                                </div>
+                                <span asp-validation-for="Cvc" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Terms Checkbox -->
+                        <div class="form-check mb-4">
+                            <input asp-for="AcceptTerms" class="form-check-input" type="checkbox" id="acceptTerms" />
+                            <label class="form-check-label small text-muted" for="acceptTerms">
+                                <a href="#" class="text-decoration-underline" data-bs-toggle="modal" data-bs-target="#termsModal">Ödeme koşullarını</a> ve
+                                <a href="#" class="text-decoration-underline" data-bs-toggle="modal" data-bs-target="#termsModal">iade politikasını</a> okudum, kabul ediyorum.
+                            </label>
+                            <br />
+                            <span asp-validation-for="AcceptTerms" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Pay Button -->
+                        <button type="submit" class="btn btn-pay" id="payButton">
+                            <span class="btn-text">
+                                <i class="bi bi-lock-fill me-2"></i>@Model.GetPrice() TL Güvenli Ödeme Yap
+                            </span>
+                            <span class="spinner-border spinner-border-sm text-white" role="status"></span>
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <a href="/Home/Index#pricing" class="text-muted small text-decoration-none">
+                                <i class="bi bi-arrow-left me-1"></i> İptal et ve geri dön
+                            </a>
+                        </div>
+
+                        <!-- Trust Badges -->
+                        <div class="trust-badges">
+                            <div class="trust-badge">
+                                <i class="bi bi-shield-check text-success"></i>
+                                <span>Güvenli Ödeme</span>
+                            </div>
+                            <div class="trust-badge">
+                                <i class="bi bi-lock text-primary"></i>
+                                <span>SSL Şifreleme</span>
+                            </div>
+                            <div class="trust-badge">
+                                <i class="bi bi-credit-card text-info"></i>
+                                <span>Visa / Mastercard</span>
+                            </div>
+                            <div class="trust-badge">
+                                <i class="bi bi-arrow-repeat text-warning"></i>
+                                <span>14 Gün İade</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-5 order-lg-last order-first">
+                <div class="summary-card">
+                    <div class="plan-badge">
+                        <i class="bi bi-star-fill me-1"></i> @Model.Plan Planı
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="price-display">
+                            @Model.GetPrice() <span class="currency">TL</span>
+                            @if (!string.IsNullOrEmpty(Model.GetOldPrice()))
+                            {
+                                <span class="price-old">@Model.GetOldPrice() TL</span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.GetOldPrice()))
+                        {
+                            <span class="discount-badge">
+                                <i class="bi bi-tag-fill me-1"></i>
+                                İNDİRİMLİ
+                            </span>
+                        }
+                    </div>
+
+                    <p class="opacity-75 small mb-0">Tek seferlik ödeme, abonelik yok</p>
+
+                    <hr style="opacity: 0.2" />
+
+                    <h6 class="fw-bold mb-3">Paketinize Dahil:</h6>
+                    <ul class="feature-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            @Model.GetUploadLimit() fotoğraf, video & mesaj yükleme
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            Etkinlikten @Model.GetStorageDays() gün sonraya kadar depolama
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            Etkinlikten @Model.GetUploadDays() gün sonraya kadar yükleme
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            Yüksek kalitede depolama
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            Gelişmiş kişiselleştirme
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            Limitsiz davetli
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            Canlı slayt gösterisi
+                        </li>
+                            <li>
+                                <i class="bi bi-star-fill" style="color: #FFD700;"></i>
+                                Öncelikli destek
+                            </li>
+                    </ul>
+
+                    <hr style="opacity: 0.2" />
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Toplam</span>
+                        <span class="fw-bold fs-4">@Model.GetPrice() TL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius: 16px;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Ödeme Koşulları ve İade Politikası</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="fw-bold">Ödeme Koşulları</h6>
+                    <p class="small text-muted">
+                        KarWedding hizmet planları tek seferlik ödeme ile satın alınır. Ödeme yapıldıktan sonra plan
+                        hemen aktif hale gelir ve mevcut etkinliklerinize uygulanır.
+                    </p>
+
+                    <h6 class="fw-bold mt-3">İade Politikası</h6>
+                    <p class="small text-muted">
+                        Satın alma tarihinden itibaren 14 gün içinde, hizmetin kullanılmamış olması koşuluyla tam iade
+                        talep edebilirsiniz. İade talepleriniz için destek ekibimizle iletişime geçiniz.
+                    </p>
+
+                    <h6 class="fw-bold mt-3">Gizlilik ve Güvenlik</h6>
+                    <p class="small text-muted">
+                        Kart bilgileriniz 256-bit SSL şifreleme ile korunmaktadır. Kredi kartı bilgileriniz
+                        sunucularımızda saklanmaz ve üçüncü taraflarla paylaşılmaz.
+                    </p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">Anladım</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // ============================
+            // Card Number Formatting
+            // ============================
+            const cardInput = document.getElementById('cardNumber');
+            const cardBrand = document.getElementById('cardBrand');
+
+            cardInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.substring(0, 16);
+
+                // Format with spaces
+                let formatted = '';
+                for (let i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) formatted += ' ';
+                    formatted += value[i];
+                }
+                e.target.value = formatted;
+
+                // Detect card brand
+                if (value.startsWith('4')) {
+                    cardBrand.innerHTML = '<i class="bi bi-credit-card-2-front text-primary"></i>';
+                    cardBrand.title = 'Visa';
+                } else if (value.startsWith('5') || value.startsWith('2')) {
+                    cardBrand.innerHTML = '<i class="bi bi-credit-card-2-back text-danger"></i>';
+                    cardBrand.title = 'Mastercard';
+                } else if (value.startsWith('9')) {
+                    cardBrand.innerHTML = '<i class="bi bi-credit-card text-success"></i>';
+                    cardBrand.title = 'Troy';
+                } else {
+                    cardBrand.innerHTML = '';
+                }
+            });
+
+            // ============================
+            // Expiry Date Formatting
+            // ============================
+            const expiryInput = document.getElementById('expiryDate');
+            expiryInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    let month = parseInt(value.substring(0, 2));
+                    if (month > 12) month = 12;
+                    if (month < 1 && value.substring(0, 2) !== '0' && value.substring(0, 2) !== '00') month = 1;
+                    value = month.toString().padStart(2, '0') + value.substring(2);
+                }
+                if (value.length > 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+            });
+
+            // ============================
+            // CVC - Only digits
+            // ============================
+            const cvcInput = document.getElementById('cvcInput');
+            cvcInput.addEventListener('input', function (e) {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+            });
+
+            // ============================
+            // Card Holder - Only letters and spaces
+            // ============================
+            const nameInput = document.querySelector('[name="CardHolderName"]');
+            nameInput.addEventListener('input', function (e) {
+                e.target.value = e.target.value.replace(/[^a-zA-ZçÇğĞıİöÖşŞüÜ\s]/g, '').toUpperCase();
+            });
+
+            // ============================
+            // Form Submit - Loading State
+            // ============================
+            const form = document.getElementById('paymentForm');
+            const payButton = document.getElementById('payButton');
+
+            form.addEventListener('submit', function (e) {
+                // Basic client-side validation
+                const cardNum = cardInput.value.replace(/\s/g, '');
+                const expiry = expiryInput.value;
+                const cvc = cvcInput.value;
+                const name = nameInput.value.trim();
+                const terms = document.getElementById('acceptTerms').checked;
+
+                let hasError = false;
+
+                // Clear previous custom errors
+                document.querySelectorAll('.custom-error').forEach(el => el.remove());
+
+                if (name.length < 3) {
+                    showFieldError(nameInput, 'Lütfen geçerli bir isim giriniz.');
+                    hasError = true;
+                }
+
+                if (cardNum.length < 15) {
+                    showFieldError(cardInput, 'Kart numarası eksik.');
+                    hasError = true;
+                }
+
+                if (expiry.length < 5) {
+                    showFieldError(expiryInput, 'Son kullanma tarihi eksik.');
+                    hasError = true;
+                }
+
+                if (cvc.length < 3) {
+                    showFieldError(cvcInput, 'CVC kodu eksik.');
+                    hasError = true;
+                }
+
+                if (!terms) {
+                    showFieldError(document.getElementById('acceptTerms'), 'Koşulları kabul etmelisiniz.');
+                    hasError = true;
+                }
+
+                if (hasError) {
+                    e.preventDefault();
+                    return;
+                }
+
+                // Show loading state
+                payButton.classList.add('loading');
+                payButton.disabled = true;
+            });
+
+            function showFieldError(input, message) {
+                // Remove existing custom error for this field
+                const existingError = input.closest('.mb-3, .col-6, .form-check')?.querySelector('.custom-error');
+                if (existingError) existingError.remove();
+
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'text-danger small mt-1 custom-error';
+                errorDiv.textContent = message;
+                input.closest('.input-icon-group, .form-check')?.appendChild(errorDiv);
+                input.classList.add('is-invalid');
+
+                // Remove error on next input
+                input.addEventListener('input', function handler() {
+                    input.classList.remove('is-invalid');
+                    errorDiv.remove();
+                    input.removeEventListener('input', handler);
+                }, { once: true });
+            }
+        });
+    </script>
+</body>
+</html>

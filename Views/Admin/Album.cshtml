@@ -1,0 +1,112 @@
+@model IEnumerable<dugunsalonu.Models.GuestEntry>
+@{
+    ViewData["Title"] = "Dijital Albüm";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .gallery-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .gallery-item {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .gallery-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+        padding: 10px;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+        opacity: 1;
+    }
+
+    .guest-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .upload-time {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #888;
+    }
+</style>
+
+<div class="gallery-header">
+    <div>
+        <h2 class="fw-bold mb-1">Dijital Albüm</h2>
+        <p class="text-muted mb-0">Etkinliğinde paylaşılan tüm anılar burada.</p>
+    </div>
+    <div>
+        <button class="btn btn-outline-primary me-2">
+            <i class="bi bi-filter"></i> Filtrele
+        </button>
+        <button class="btn btn-primary">
+            <i class="bi bi-download"></i> Tümünü İndir
+        </button>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="display-1 mb-3"><i class="bi bi-images"></i></div>
+        <h4>Henüz hiç fotoğraf yok.</h4>
+        <p>Misafirlerin fotoğraf yüklediğinde burada görünecek.</p>
+    </div>
+}
+else
+{
+    <div class="gallery-grid">
+        @foreach (var item in Model)
+        {
+            <div class="gallery-item">
+                <img src="@item.PhotoPath" alt="Guest Photo" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="guest-name">@(!string.IsNullOrEmpty(item.GuestName) ? item.GuestName : "Misafir")</div>
+                    <div class="upload-time">@item.UploadedAt.ToString("HH:mm")</div>
+                </div>
+            </div>
+        }
+    </div>
+}

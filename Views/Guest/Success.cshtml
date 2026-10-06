@@ -1,0 +1,145 @@
+@{
+    var weddingEvent = ViewBag.Event as dugunsalonu.Models.WeddingEvent;
+    Layout = "_Layout";
+    ViewData["Title"] = "Tebrikler!";
+}
+
+<style>
+    .success-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+    }
+    .success-card {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        max-width: 500px;
+        width: 100%;
+        animation: slideUp 0.8s ease-out;
+    }
+    .icon-circle {
+        width: 100px;
+        height: 100px;
+        background: #f0fdf4;
+        color: #22c55e;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin: 0 auto 24px;
+        animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s both;
+    }
+    h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+    }
+    p {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 32px;
+    }
+    .btn-custom {
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+    .btn-primary-custom {
+        background: #6366f1;
+        color: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+    .btn-primary-custom:hover {
+        background: #4f46e5;
+        transform: translateY(-2px);
+    }
+    .btn-outline-custom {
+        background: transparent;
+        border: 2px solid #e5e7eb;
+        color: #374151;
+    }
+    .btn-outline-custom:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+    }
+    
+    @@keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @@keyframes scaleIn {
+        from { transform: scale(0); }
+        to { transform: scale(1); }
+    }
+</style>
+
+<div class="success-container">
+    <div class="success-card">
+        <div class="icon-circle">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        
+        <h1>Teşekkürler!</h1>
+        
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <p>@TempData["SuccessMessage"]</p>
+        }
+        else
+        {
+            <p>Fotoğrafınız ve mesajınız başarıyla alındı. Moderasyon onayından sonra albümde ve canlı yayında görünecektir.</p>
+        }
+
+        <div class="actions">
+            <a href="/event/@weddingEvent.Slug/upload" class="btn btn-custom btn-primary-custom">
+                <i class="bi bi-plus-lg me-2"></i> Yeni Fotoğraf Yükle
+            </a>
+            <a href="/event/@weddingEvent.Slug" class="btn btn-custom btn-outline-custom">
+                <i class="bi bi-images me-2"></i> Dijital Albüme Git
+            </a>
+        </div>
+        
+        <div class="mt-4 text-muted small">
+            <i class="bi bi-heart-fill text-danger"></i> @weddingEvent.CoupleName çiftine mutluluklar dileriz!
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var gsid = getGuestSessionId();
+            
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/guestHub")
+                .build();
+
+            connection.on("PhotoRejected", function () {
+                // Show a more prominent notification
+                alert("Maalesef içeriğiniz uygun görülmediği için reddedildi. Lütfen başka bir içerik yüklemeyi deneyin.");
+                // Optionally redirect back to upload
+                window.location.href = "/event/@weddingEvent.Slug/upload";
+            });
+
+            connection.start().then(function () {
+                connection.invoke("JoinGuestGroup", gsid).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+        });
+    </script>
+}

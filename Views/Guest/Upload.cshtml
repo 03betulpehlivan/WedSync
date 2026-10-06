@@ -1,0 +1,292 @@
+@model dugunsalonu.ViewModels.GuestEntryViewModel
+@{
+    Layout = null;
+    var weddingEvent = ViewBag.Event as dugunsalonu.Models.WeddingEvent;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@weddingEvent?.CoupleName - Yükle</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #333;
+        }
+
+        .header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .btn-back-link {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-back-link:hover { text-decoration: underline; }
+
+        .brand-logo {
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .main-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .event-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .upload-zone {
+            border: 2px dashed #a3bffa;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            background: #f8faff;
+        }
+
+        .upload-zone:hover {
+            background: #edf2ff;
+            border-color: #667eea;
+        }
+
+        .upload-zone i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .message-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-note {
+            margin-top: auto;
+            padding: 2rem;
+            text-align: center;
+            color: #e76f51;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .preview-thumb {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+        .preview-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .preview-extra {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e2e8f0;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="/event/@weddingEvent?.Slug" class="btn-back-link">
+            <i class="bi bi-arrow-left"></i> Albüme git
+        </a>
+        @if (!string.IsNullOrEmpty(weddingEvent?.LogoUrl))
+        {
+            <img src="@weddingEvent.LogoUrl" alt="Salon Logo" style="max-height: 40px;" />
+        }
+        else
+        {
+            <div class="brand-logo">KarWedding</div>
+        }
+        <div class="text-secondary small">TR <i class="bi bi-chevron-down"></i></div>
+    </div>
+
+    <div class="main-container">
+        <h2 class="event-title">@weddingEvent?.CoupleName</h2>
+
+        @if (ViewBag.UploadPeriodExpired == true)
+        {
+            <div class="alert alert-warning">
+                <i class="bi bi-clock-history"></i>
+                <strong>Yükleme süresi dolmuştur.</strong>
+                <p class="mb-0 mt-2">Bu etkinlik için yükleme yapılamamaktadır.</p>
+                <small>Son yükleme tarihi: @(((DateTime)ViewBag.UploadDeadline).ToString("dd.MM.yyyy"))</small>
+            </div>
+            <a href="/event/@weddingEvent?.Slug" class="btn btn-primary mt-3">Albümü Görüntüle</a>
+        }
+        else if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p class="mb-0">@error.ErrorMessage</p>
+                }
+            </div>
+        }
+
+        @if (ViewBag.UploadPeriodExpired != true)
+        {
+        <!-- Image Upload Form - Çoklu seçim destekli -->
+        <form asp-action="Upload" enctype="multipart/form-data" method="post" id="imageUploadForm">
+            <input type="hidden" name="GuestName" value="Misafir" />
+            @Html.AntiForgeryToken()
+            
+            <div class="upload-zone" onclick="document.getElementById('photoInput').click()" id="uploadZone">
+                <i class="bi bi-camera-fill"></i>
+                <div class="upload-text">Yükle veya buraya sürükle: JPEG, JPG, PNG</div>
+                <div class="upload-subtext mt-1 text-muted small">Birden fazla fotoğraf seçebilirsiniz (en fazla 10)</div>
+                <input type="file" name="Photos" id="photoInput" accept="image/jpeg,image/jpg,image/png,.jpg,.jpeg,.png" multiple style="display: none;" onchange="handlePhotoSelect(event)">
+            </div>
+            
+            <div id="selectedPreview" class="mt-3" style="display: none;">
+                <div class="d-flex flex-wrap gap-2 justify-content-center mb-2" id="previewContainer"></div>
+                <button type="button" class="btn btn-primary px-4" onclick="document.getElementById('imageUploadForm').requestSubmit()">
+                    <i class="bi bi-cloud-upload me-2"></i> Seçilenleri Yükle
+                </button>
+                <button type="button" class="btn btn-outline-secondary ms-2" onclick="clearSelection()">İptal</button>
+            </div>
+        </form>
+
+        <!-- Video Upload Form (Mock for now, sends to same endpoint but we filter client side) -->
+        <div class="upload-zone" onclick="alert('Video yükleme özelliği yakında!');">
+            <i class="bi bi-play-btn-fill"></i>
+            <div class="upload-text">Yükle veya buraya sürükle: MP4, MOV, AVI...</div>
+        </div>
+
+        <a href="#" class="message-link" onclick="document.getElementById('messageModal').style.display='block'">
+            <i class="bi bi-chat-text-fill"></i> Mesajını ilet
+        </a>
+        }
+    </div>
+
+    <div class="footer-note">
+        *Tek seferde en fazla 10 içerik yükleyebilirsiniz!
+    </div>
+    
+    <!-- Simple Message Modal -->
+    <div id="messageModal" class="modal" tabindex="-1" style="display: none; background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Mesaj Bırak</h5>
+            <button type="button" class="btn-close" onclick="document.getElementById('messageModal').style.display='none'"></button>
+          </div>
+          <div class="modal-body">
+              <form asp-action="Upload" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="GuestName" value="Misafir" />
+                <div class="mb-3">
+                    <label class="form-label">Mesajınız</label>
+                    <textarea name="Message" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Gönder</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Set GuestSessionId for both forms
+        $(document).ready(function() {
+            var gsid = getGuestSessionId();
+            $('form').each(function() {
+                if ($(this).find('input[name="GuestSessionId"]').length === 0) {
+                    $(this).append('<input type="hidden" name="GuestSessionId" value="' + gsid + '" />');
+                }
+            });
+        });
+
+        function handlePhotoSelect(e) {
+            var input = e.target;
+            var files = input.files;
+            if (!files || files.length === 0) return;
+
+            var container = document.getElementById('previewContainer');
+            var previewDiv = document.getElementById('selectedPreview');
+            container.innerHTML = '';
+
+            var max = Math.min(files.length, 10);
+            for (var i = 0; i < max; i++) {
+                var f = files[i];
+                var div = document.createElement('div');
+                div.className = 'preview-thumb';
+                var img = document.createElement('img');
+                img.src = URL.createObjectURL(f);
+                img.alt = f.name;
+                div.appendChild(img);
+                container.appendChild(div);
+            }
+            if (files.length > 10) {
+                var extra = document.createElement('div');
+                extra.className = 'preview-thumb preview-extra';
+                extra.textContent = '+' + (files.length - 10);
+                container.appendChild(extra);
+            }
+            previewDiv.style.display = 'block';
+        }
+        function clearSelection() {
+            document.getElementById('photoInput').value = '';
+            document.getElementById('previewContainer').innerHTML = '';
+            document.getElementById('selectedPreview').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

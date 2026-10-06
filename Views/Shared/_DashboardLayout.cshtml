@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - KarWedding</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            background-color: #f3f6fd; /* Light blueish grey background */
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 40%, #f78da7 70%, #fdbd65 100%);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .brand-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.9);
+            color: #764ba2;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+        }
+
+        .event-switcher {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-top: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logout-link {
+            color: white;
+            opacity: 0.8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding-left: 5px;
+        }
+        .logout-link:hover { opacity: 1; color: white; }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-banner {
+            background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            background: linear-gradient(90deg, #E0C3FC 0%, #8EC5FC 100%); /* Soft blue/purple */
+            background: linear-gradient(90deg, #FFA99F 0%, #FF719A 100%); /* Peach/Pink like screenshot */
+            background: #EBA083; /* Fallback */
+            background: linear-gradient(90deg, #EBA083 0%, #E98E85 100%);
+            color: white;
+            padding: 12px 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+        
+        .upgrade-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .upgrade-btn:hover { background: white; color: #E98E85; }
+
+        .dashboard-container {
+            padding: 2rem 3rem;
+            flex-grow: 1;
+        }
+
+        /* Footer */
+        .dashboard-footer {
+            padding: 1.5rem 3rem;
+            color: #8898aa;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand-logo">
+            <i class="bi bi-stars"></i> KarWedding
+        </div>
+        
+        <nav class="nav flex-column">
+            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")" href="/Admin/Index">
+                <i class="bi bi-house-door"></i> Ana Sayfa
+            </a>
+            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Album" ? "active" : "")" href="/Admin/Album">
+                <i class="bi bi-images"></i> Dijital Albüm
+            </a>
+            <a class="nav-link" href="#" onclick="alert('Bu özellik yakında!');">
+                <i class="bi bi-gear"></i> Ayarlar
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" class="nav-link" style="padding: 0; margin-bottom: 1rem; opacity: 0.7;">
+                <i class="bi bi-envelope"></i> İletişime Geçin
+            </a>
+            
+            <div class="event-switcher">
+                <span class="text-truncate" style="max-width: 180px;">
+                    @if(ViewBag.EventName != null) { @ViewBag.EventName } else { <text>Etkinliğim</text> }
+                </span>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+
+            <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-link bg-transparent border-0 p-0 w-100 text-start">
+                    <i class="bi bi-box-arrow-right"></i> Çıkış Yap
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Plan Banner -->
+        @{
+            var currentPlan = ViewBag.CurrentPlan as dugunsalonu.Models.PlanType? ?? dugunsalonu.Models.PlanType.Free;
+        }
+
+        @if (currentPlan == dugunsalonu.Models.PlanType.Free)
+        {
+            <div class="top-banner">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span>Şu anda sınırlı <strong>Ücretsiz Üyelik</strong> planındasın. KarWedding'in daha gelişmiş özelliklerinden yararlanmak için Pro aboneliğine geç!</span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/Payment/Checkout?plan=Pro" class="upgrade-btn fw-bold" style="background: rgba(255,255,255,0.9); color: #E98E85;">Pro'ya Yükselt</a>
+                    <i class="bi bi-x-lg" style="cursor: pointer;" onclick="this.closest('.top-banner').style.display='none'"></i>
+                </div>
+            </div>
+        }
+        else if (currentPlan == dugunsalonu.Models.PlanType.Pro)
+        {
+            <div class="top-banner" style="background: linear-gradient(90deg, #28a745 0%, #20c997 100%);">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-trophy-fill"></i>
+                    <span><strong>Pro</strong> üyeliğiniz aktif! Sınırsız içerik yükleme ve tüm premium özellikler sizin.</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                    <i class="bi bi-x-lg" style="cursor: pointer;" onclick="this.closest('.top-banner').style.display='none'"></i>
+                </div>
+            </div>
+        }
+        else if (currentPlan == dugunsalonu.Models.PlanType.SalonBusiness)
+        {
+            <div class="top-banner" style="background: linear-gradient(90deg, #fd7e14 0%, #ffc107 100%);">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-building"></i>
+                    <span><strong>Salon Business</strong> üyeliğiniz aktif! Sınırsız etkinlik ve salon markalaşması sizin.</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                    <i class="bi bi-x-lg" style="cursor: pointer;" onclick="this.closest('.top-banner').style.display='none'"></i>
+                </div>
+            </div>
+        }
+
+        <div class="dashboard-container">
+            @RenderBody()
+        </div>
+
+        <div class="dashboard-footer">
+            <span>&copy; 2026 KarWedding. Bütün hakları gizlidir.</span>
+            <div class="d-flex gap-2 text-muted">
+                <i class="bi bi-credit-card-2-front" style="font-size: 1.5rem;"></i>
+                <i class="bi bi-wallet2" style="font-size: 1.5rem;"></i>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

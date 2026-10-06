@@ -1,0 +1,145 @@
+@model List<dugunsalonu.Models.GuestEntry>
+@{
+    ViewData["Title"] = "Moderasyon - " + ViewBag.EventName;
+}
+
+<div class="container mt-4">
+    @Html.AntiForgeryToken()
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Moderasyon: <span class="text-primary">@ViewBag.EventName</span></h2>
+        <div>
+            <button onclick="approveAll()" class="btn btn-success me-2" id="btn-approve-all" @(Model.Any() ? "" : "disabled")>
+                <i class="bi bi-check-all"></i> Hepsini Onayla
+            </button>
+            <button onclick="rejectAll()" class="btn btn-danger me-2" id="btn-reject-all" @(Model.Any() ? "" : "disabled")>
+                <i class="bi bi-trash"></i> Hepsini Reddet
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Geri Dön</a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info" id="empty-moderation-alert">
+            <i class="bi bi-info-circle"></i> Onay bekleyen fotoğraf yok.
+        </div>
+    }
+
+    <div class="row" id="moderation-grid">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-lg-3 mb-4" id="card-@item.Id">
+                <div class="card h-100 shadow-sm">
+                    <div style="height: 200px; overflow: hidden;" class="bg-light d-flex align-items-center justify-content-center">
+                         <img src="@item.PhotoPath" class="card-img-top" style="object-fit: contain; max-height: 100%; width: 100%;" alt="User Photo">
+                    </div>
+                   
+                    <div class="card-body">
+                        <h6 class="card-title">@item.GuestName</h6>
+                        <p class="card-text small text-muted">"@item.Message"</p>
+                        <small class="text-muted">@item.UploadedAt.ToString("HH:mm")</small>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
+                        <button onclick="approve('@item.Id')" class="btn btn-success btn-sm w-45">
+                            <i class="bi bi-check-lg"></i> Onayla
+                        </button>
+                        <button onclick="reject('@item.Id')" class="btn btn-danger btn-sm w-45">
+                            <i class="bi bi-x-lg"></i> Reddet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        var eventId = '@ViewBag.EventId';
+        function getToken() {
+            return $('input[name="__RequestVerificationToken"]').val();
+        }
+        function approve(id) {
+            $.post('/Admin/Approve/' + id, { __RequestVerificationToken: getToken() })
+                .done(function() { 
+                    $('#card-' + id).fadeOut(); 
+                    checkButtons();
+                })
+                .fail(function() { alert('Onaylama başarısız. Sayfayı yenileyip tekrar deneyin.'); });
+        }
+        function reject(id) {
+            if (!confirm('Kalıcı olarak silinecek. Emin misiniz?')) return;
+            $.post('/Admin/Reject/' + id, { __RequestVerificationToken: getToken() })
+                .done(function() { 
+                    $('#card-' + id).fadeOut(); 
+                    checkButtons();
+                })
+                .fail(function() { alert('Reddetme başarısız. Sayfayı yenileyip tekrar deneyin.'); });
+        }
+        function approveAll() {
+            if (!confirm('Tüm bekleyen fotoğrafları onaylamak istediğinize emin misiniz?')) return;
+            $.post('/Admin/ApproveAll/' + eventId, { __RequestVerificationToken: getToken() })
+                .done(function() { location.reload(); })
+                .fail(function() { alert('İşlem başarısız.'); });
+        }
+        function rejectAll() {
+            if (!confirm('Tüm bekleyen fotoğrafları reddetmek (silmek) istediğinize emin misiniz?')) return;
+            $.post('/Admin/RejectAll/' + eventId, { __RequestVerificationToken: getToken() })
+                .done(function() { location.reload(); })
+                .fail(function() { alert('İşlem başarısız.'); });
+        }
+        function checkButtons() {
+            setTimeout(function() {
+                var count = $('#moderation-grid').find('[id^="card-"]:visible').length;
+                if (count === 0) {
+                    $('#btn-approve-all, #btn-reject-all').prop('disabled', true);
+                    $('#empty-moderation-alert').fadeIn();
+                } else {
+                    $('#btn-approve-all, #btn-reject-all').prop('disabled', false);
+                    $('#empty-moderation-alert').hide();
+                }
+            }, 500);
+        }
+        function renderCard(item) {
+            return '<div class="col-md-4 col-lg-3 mb-4" id="card-' + item.id + '">' +
+                '<div class="card h-100 shadow-sm">' +
+                '<div style="height: 200px; overflow: hidden;" class="bg-light d-flex align-items-center justify-content-center">' +
+                '<img src="' + (item.photoPath || '') + '" class="card-img-top" style="object-fit: contain; max-height: 100%; width: 100%;" alt="User Photo">' +
+                '</div><div class="card-body">' +
+                '<h6 class="card-title">' + (item.guestName || 'Misafir') + '</h6>' +
+                '<p class="card-text small text-muted">"' + (item.message || '') + '"</p>' +
+                '<small class="text-muted">' + (item.uploadedAt || '') + '</small>' +
+                '</div><div class="card-footer bg-white border-top-0 d-flex justify-content-between">' +
+                '<button onclick="approve(\'' + item.id + '\')" class="btn btn-success btn-sm w-45"><i class="bi bi-check-lg"></i> Onayla</button>' +
+                '<button onclick="reject(\'' + item.id + '\')" class="btn btn-danger btn-sm w-45"><i class="bi bi-x-lg"></i> Reddet</button>' +
+                '</div></div></div>';
+        }
+        function refreshPendingItems() {
+            $.getJSON('/Admin/ModerationItems/' + eventId, function(items) {
+                var grid = $('#moderation-grid');
+                var existingIds = {};
+                grid.find('[id^="card-"]').each(function() { existingIds[$(this).attr('id')] = true; });
+                var added = false;
+                items.forEach(function(item) {
+                    var cid = 'card-' + item.id;
+                    if (!existingIds[cid]) {
+                        var card = renderCard({ id: item.id, photoPath: item.photoPath, message: item.message, guestName: item.guestName, uploadedAt: item.uploadedAt });
+                        grid.prepend(card);
+                        added = true;
+                    }
+                });
+                if (added) {
+                    $('#empty-moderation-alert').hide();
+                    checkButtons();
+                }
+            });
+        }
+        if (eventId) {
+            var conn = new signalR.HubConnectionBuilder().withUrl("/adminHub").build();
+            conn.on("NewPendingItems", function() { refreshPendingItems(); });
+            conn.start().then(function() { conn.invoke("JoinEventGroup", eventId).catch(function() {}); });
+        }
+    </script>
+}

@@ -1,0 +1,202 @@
+@model IEnumerable<dugunsalonu.Models.WeddingEvent>
+
+@{
+    ViewData["Title"] = "Yönetim Paneli";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    var latestEvent = Model.FirstOrDefault();
+    
+    // Generate QR URL if event exists - ViewBag.EventBaseUrl yerel ağ IP kullanır (telefon QR için)
+    var qrUrl = "";
+    var eventUrl = "";
+    if (latestEvent != null)
+    {
+        var domain = ViewBag.EventBaseUrl as string ?? $"{Context.Request.Scheme}://{Context.Request.Host}";
+        eventUrl = $"{domain}/event/{latestEvent.Slug}";
+        qrUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={System.Net.WebUtility.UrlEncode(eventUrl)}&color=000000";
+    }
+}
+
+<style>
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        transition: transform 0.2s;
+        height: 100%;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-header {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSIjNzY0YmEyIiBvcGFjaXR5PSIwLjEiLz48L3N2Zz4=');
+    }
+</style>
+
+@if (latestEvent != null)
+{
+    <div class="welcome-header">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                @if (!string.IsNullOrEmpty(latestEvent.SalonName))
+                {
+                    <div class="d-flex align-items-center mb-3">
+                        @if (!string.IsNullOrEmpty(latestEvent.LogoUrl))
+                        {
+                            <img src="@latestEvent.LogoUrl" alt="Salon Logo" class="me-3 rounded" style="height: 60px; object-fit: contain;">
+                        }
+                        <h2 class="fw-bold text-dark mb-0">@latestEvent.SalonName</h2>
+                    </div>
+                    <p class="text-muted mb-0"><strong>@latestEvent.CoupleName</strong> etkinliği şu an aktif.</p>
+                }
+                else
+                {
+                    <h2 class="fw-bold text-dark mb-2">Hoşgeldin, @User.Identity.Name! 👋</h2>
+                    <p class="text-muted mb-0">Etkinliğin <strong>@latestEvent.CoupleName</strong> için her şey yolunda görünüyor.</p>
+                }
+                
+                <div class="d-flex gap-3 mt-4">
+                    <a href="@eventUrl" target="_blank" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-eye me-2"></i> Albümü Görüntüle
+                    </a>
+                    <button onclick="copyLink()" class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="bi bi-share me-2"></i> Linki Paylaş
+                    </button>
+                    <a href="/Admin/Moderation/@latestEvent.Id" class="btn btn-warning rounded-pill px-4 text-white">
+                        <i class="bi bi-shield-check me-2"></i> Moderasyon
+                    </a>
+                    <a href="/Admin/EditEvent/@latestEvent.Id" class="btn btn-secondary rounded-pill px-4 text-white">
+                        <i class="bi bi-gear-fill me-2"></i> Ayarlar
+                    </a>
+                    <a href="/Admin/DownloadAllPhotos/@latestEvent.Id" class="btn btn-dark rounded-pill px-4">
+                        <i class="bi bi-file-earmark-zip me-2"></i> Tümünü İndir (ZIP)
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center d-none d-lg-block">
+                <img src="@qrUrl" alt="QR" style="width: 120px; border-radius: 12px; border: 4px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div class="small text-muted mt-2">QR Kodun Hazır</div>
+                <a href="/Admin/DownloadQRCode/@latestEvent.Id" class="btn btn-sm btn-outline-dark mt-2 rounded-pill">
+                    <i class="bi bi-download me-1"></i> QR Kartını İndir (.PNG)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-bold text-uppercase ls-1">Toplam Dosya</div>
+                        <h2 class="fw-bold mt-2 mb-0">@(ViewBag.TotalFiles ?? 0)</h2>
+                    </div>
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-images"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2">
+                        <i class="bi bi-arrow-up-short"></i> +@(ViewBag.TodayCount ?? 0) bugün
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-bold text-uppercase ls-1">Misafir Sayısı</div>
+                        <h2 class="fw-bold mt-2 mb-0">@(ViewBag.GuestCount ?? 0)</h2>
+                    </div>
+                    <div class="stat-icon bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-people"></i>
+                    </div>
+                </div>
+                 <div class="mt-3">
+                    <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-2">
+                        Aktif Katılım
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <a href="/Admin/Moderation/@latestEvent.Id" class="stat-card text-decoration-none d-block">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-bold text-uppercase ls-1">Onay Bekleyen</div>
+                        <h2 class="fw-bold mt-2 mb-0 text-warning" id="pending-count">@(ViewBag.PendingCount ?? 0)</h2>
+                    </div>
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="small fw-bold text-warning">
+                        Onaylamak için tıkla <i class="bi bi-arrow-right"></i>
+                    </span>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Hidden link for JS copy -->
+    <span id="shareLink" style="display:none;">@eventUrl</span>
+}
+else
+{
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-stars text-primary" style="font-size: 4rem;"></i>
+        </div>
+        <h3 class="fw-bold">Henüz aktif bir etkinliğin yok.</h3>
+        <p class="text-muted">Hemen yeni bir düğün etkinliği oluştur ve misafirlerinle paylaşmaya başla!</p>
+        <a asp-action="CreateEvent" class="btn btn-primary btn-lg rounded-pill px-5 mt-3 shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> Yeni Etkinlik Oluştur
+        </a>
+    </div>
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+<script>
+    function copyLink() {
+        var copyText = document.getElementById("shareLink").innerText;
+        navigator.clipboard.writeText(copyText).then(function() {
+            alert("Link panoya kopyalandı! Misafirlerinle hemen paylaşabilirsin.");
+        });
+    }
+
+    @if (latestEvent != null)
+    {
+        <text>
+        (function() {
+            var connection = new signalR.HubConnectionBuilder().withUrl("/adminHub").build();
+            connection.on("NewPendingItems", function(count) {
+                var el = document.getElementById("pending-count");
+                if (el) el.textContent = count;
+            });
+            connection.start().then(function() {
+                connection.invoke("JoinEventGroup", "@latestEvent.Id").catch(function() {});
+            }).catch(function() {});
+        })();
+        </text>
+    }
+</script>

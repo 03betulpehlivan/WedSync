@@ -1,0 +1,62 @@
+@model dugunsalonu.Models.WeddingEvent
+@{
+    ViewData["Title"] = "Yeni Etkinlik";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Yeni Düğün Etkinliği</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateEvent" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="CoupleName" class="form-label"></label>
+                            <input asp-for="CoupleName" class="form-control" placeholder="Örn: Ahmet & Ayşe" />
+                            <span asp-validation-for="CoupleName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="EventDate" class="form-label"></label>
+                            <input asp-for="EventDate" type="date" class="form-control" />
+                            <span asp-validation-for="EventDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ThemeColor" class="form-label">Tema Rengi</label>
+                            <input asp-for="ThemeColor" type="color" class="form-control form-control-color" value="#D4AF37" title="Tema rengi seçin">
+                        </div>
+
+                        <hr class="my-4">
+                        <h5 class="mb-3 text-muted">Salon Ayarları (Opsiyonel)</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="SalonName" class="form-label">Salon Adı</label>
+                            <input asp-for="SalonName" class="form-control" placeholder="Örn: Grand Hotel Balo Salonu" />
+                            <span asp-validation-for="SalonName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Salon Logosu</label>
+                            <input type="file" name="logoFile" class="form-control" accept=".jpg,.jpeg,.png" />
+                            <div class="form-text">Salon logosunu yükleyerek "KarWedding" logosunu değiştirebilirsiniz.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Oluştur</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
