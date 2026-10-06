@@ -47,7 +47,7 @@
 
 **WedSync** is a modern, web-based SaaS platform designed to elevate guest engagement at live events. Traditional event media sharing relies on disposable cameras, manual drive links, or forcing guests to download third-party mobile applications. **WedSync eliminates all friction** by utilizing dynamic QR codes and instant web uploads.
 
-Guests simply scan a venue QR code, open a responsive web application on their mobile browsers, and share photos or personal congratulatory notes. Event hosts and administrators maintain full oversight through a live moderation dashboard, where content can be approved or rejected before being pushed instantly to high-definition venue projection screens and a permanent digital event album.
+Guests simply scan a venue QR code, open a responsive web application on their mobile browsers, and share photos or personal congratulatory notes. Event hosts and administrators maintain full oversight through a live moderation dashboard, where content can be approved or rejected before being pushed instantly to high-definition venue projection screens and a digital event album.
 
 ### Target Audience & Use Cases
 
@@ -133,7 +133,7 @@ graph TD
   - `SlideshowController`: Renders full-screen live event slideshow views.
   - `AccountController`: Manages user authentication, registration, password policies, account lockouts, and Google OAuth callbacks.
   - `OnboardingController`: Guides new event hosts through event setup and plan selection.
-  - `PaymentController`: Handles plan checkout forms, server-side card validation, and subscription management.
+  - `PaymentController`: Handles plan selection, checkout flow, and subscription-related logic.
 - **Services Layer**: `FileService` provides secure file upload handling, extension verification, MIME type enforcement, Magic Bytes signature inspection, path traversal protection, and automated image re-encoding via `SixLabors.ImageSharp`.
 - **Real-Time Communication Layer**: Three dedicated SignalR Hubs (`SlideshowHub`, `AdminHub`, `GuestHub`) process group-scoped WebSocket notifications.
 - **Persistence Layer**: Entity Framework Core 8 interacting with Microsoft SQL Server to manage `WeddingEvent`, `GuestEntry`, and ASP.NET Core `IdentityUser` tables.
@@ -281,7 +281,7 @@ WedSync/
 │   ├── GuestController.cs         # Guest album view & multi-file photo uploads
 │   ├── HomeController.cs          # Public landing page & marketing content
 │   ├── OnboardingController.cs    # First-time user setup wizard
-│   ├── PaymentController.cs       # Checkout & server-side card validation
+│   ├── PaymentController.cs       # Plan selection, checkout flow & subscription logic
 │   └── SlideshowController.cs     # Live slideshow full-screen presentation
 ├── Data/
 │   ├── ApplicationDbContext.cs    # EF Core DbContext definition
@@ -402,14 +402,14 @@ The repository includes visual step-by-step demonstrations showcasing the user a
 
 ## 💡 Engineering Highlights
 
-- **Bi-Directional Real-Time Synchronization**: Seamless integration of SignalR WebSockets ensures zero delay between an admin's moderation click and the visual update on venue screens.
+- **Bi-Directional Real-Time Synchronization**: Seamless integration of SignalR WebSockets enables near real-time synchronization between an admin's moderation action and the visual update on venue screens.
 - **Defensive Binary Validation**: Implementation of Magic Bytes binary header inspection prevents spoofed image uploads, ensuring high security without sacrificing performance.
 - **Dynamic Graphics Processing**: In-memory generation of custom printable QR cards using ImageSharp drawing APIs, rendering custom fonts and theme colors on-the-fly.
 - **Architectural Scoping & Security**: Robust entity ownership checking across controllers eliminates IDOR (Insecure Direct Object Reference) vulnerabilities.
 
 ---
 
-## 🏢 SaaS & Multi-Tenant Vision
+## 🏢 SaaS-Oriented & Multi-Tenant Design
 
 WedSync is designed with a scalable **Software-as-a-Service (SaaS)** architecture:
 
@@ -430,8 +430,7 @@ WedSync is designed with a scalable **Software-as-a-Service (SaaS)** architectur
 
 ## 📊 Project Status
 
-**WedSync** is an actively maintained full-stack portfolio application demonstrating real-time interactive media broadcasting, secure image processing, and multi-tenant SaaS architecture built with ASP.NET Core 8 and C#.
-
+**WedSync** is a full-stack portfolio application demonstrating real-time interactive media broadcasting, secure image processing, and SaaS-oriented architecture built with ASP.NET Core 8 and C#.
 ---
 
 ## ✍️ Author & Ownership
